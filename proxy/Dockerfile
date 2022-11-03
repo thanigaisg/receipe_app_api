@@ -11,10 +11,9 @@ ENV APP_PORT=9000
 
 USER root
 
-RUN nl /etc/nginx/default.conf.tpl
-
 RUN mkdir -p /vol/static && \
     chmod 755 /vol/static && \
+    rm /etc/nginx/conf.d/default.conf && \
     touch /etc/nginx/conf.d/default.conf && \
     chown nginx:nginx /etc/nginx/conf.d/default.conf && \
     chmod +x /run.sh
