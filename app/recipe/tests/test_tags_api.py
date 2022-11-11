@@ -1,7 +1,6 @@
 """
 Tests for the tags API
 """
-
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
@@ -23,12 +22,10 @@ TAGS_URL = reverse('recipe:tag-list')
 
 def detail_url(tag_id):
     """Create and return a tag detail url"""
-
     return reverse('recipe:tag-detail', args = [tag_id])
 
 def create_user(email = 'user@example.com', password = 'testpass123'):
     """Create and returns a user"""
-
     return get_user_model().objects.create(email = email, password = password)
 
 class PublicTagsAPITests(TestCase):
@@ -55,13 +52,13 @@ class PrivateTagsAPITests(TestCase):
     def test_retrieve_tags(self):
         """Test retrieving a list of tags"""
 
-        Tag.objects.create(user = self.user, name = 'Vegan')
-        Tag.objects.create(user = self.user, name = 'Dessert')
+        Tag.objects.create(user=self.user, name='Vegan')
+        Tag.objects.create(user=self.user, name='Dessert')
 
         res = self.client.get(TAGS_URL)
 
         tags = Tag.objects.all().order_by('-name')
-        serializer = TagSerializer(tags, many = True)
+        serializer = TagSerializer(tags, many=True)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
@@ -69,10 +66,10 @@ class PrivateTagsAPITests(TestCase):
     def test_tags_limited_to_user(self):
         """Test list of tags is limited to authenticated user"""
 
-        user2 = create_user(email = 'user2@example.com')
-        Tag.objects.create(user = user2, name = 'Fruity')
+        user2 = create_user(email='user2@example.com')
+        Tag.objects.create(user=user2, name='Fruity')
 
-        tag = Tag.objects.create(user = self.user, name = 'Comfort Food')
+        tag = Tag.objects.create(user = self.user, name='Comfort Food')
 
         res = self.client.get(TAGS_URL)
 
@@ -84,9 +81,9 @@ class PrivateTagsAPITests(TestCase):
     def test_update_tag(self):
         """Test updating a tag"""
 
-        tag = Tag.objects.create(user = self.user, name = 'After Dinner')
+        tag = Tag.objects.create(user=self.user, name='After Dinner')
 
-        payload = {'name' : 'Dessert'}
+        payload = {'name':'Dessert'}
 
         url = detail_url(tag.id)
         res = self.client.patch(url, payload)
@@ -99,7 +96,7 @@ class PrivateTagsAPITests(TestCase):
     def test_delete_tag(self):
         """Test deleting a tag"""
 
-        tag = Tag.objects.create(user = self.user, name = 'Breakfast')
+        tag = Tag.objects.create(user=self.user, name='Breakfast')
 
         url = detail_url(tag.id)
         res = self.client.delete(url)
@@ -112,8 +109,8 @@ class PrivateTagsAPITests(TestCase):
     def test_filter_tags_assigned_to_recipes(self):
         """Test listing tags to those assigned to recipes"""
 
-        tag1 = Tag.objects.create(user = self.user, name = 'Breakfast')
-        tag2 = Tag.objects.create(user = self.user, name = 'Lunch')
+        tag1 = Tag.objects.create(user=self.user, name='Breakfast')
+        tag2 = Tag.objects.create(user=self.user, name='Lunch')
 
         recipe = Recipe.objects.create(
             title = 'Green Eggs on Toast',
@@ -135,26 +132,26 @@ class PrivateTagsAPITests(TestCase):
     def test_filter_tags_unique(self):
         """Test filtered tags returns a unique list"""
 
-        tag = Tag.objects.create(user = self.user, name = 'Snacks')
-        Tag.objects.create(user = self.user, name = 'Dinner')
+        tag = Tag.objects.create(user=self.user, name='Snacks')
+        Tag.objects.create(user=self.user, name='Dinner')
 
         recipe1 = Recipe.objects.create(
-            title = 'Pan Cakes',
-            time_minutes = 5,
-            price = Decimal('5.00'),
-            user = self.user,
+            title='Pan Cakes',
+            time_minutes=5,
+            price=Decimal('5.00'),
+            user=self.user,
         )
 
         recipe2 = Recipe.objects.create(
-            title = 'Porridge',
-            time_minutes = 3,
-            price = Decimal('2.00'),
-            user = self.user,
+            title='Porridge',
+            time_minutes=3,
+            price=Decimal('2.00'),
+            user=self.user,
         )
 
         recipe1.tags.add(tag)
         recipe2.tags.add(tag)
 
-        res = self.client.get(TAGS_URL, {'assigned_only' : 1})
+        res = self.client.get(TAGS_URL, {'assigned_only':1})
 
         self.assertEqual(len(res.data), 1)

@@ -1,8 +1,6 @@
 """
 Tests for the user API.
 """
-
-import email
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -30,9 +28,9 @@ class PublicUserAPITests(TestCase):
         """Test creating the user is successful"""
 
         payload = {
-            'email': 'test@example.com',
-            'password' : 'testpass123',
-            'name' : 'Test Name'
+            'email':'test@example.com',
+            'password':'testpass123',
+            'name':'Test Name',
         }
 
         res = self.client.post(CREATE_USER_URL, payload)
@@ -47,9 +45,9 @@ class PublicUserAPITests(TestCase):
         """Test error returned if user with email exists."""
 
         payload = {
-            'email': 'test@example.com',
-            'password' : 'testpass123',
-            'name' : 'Test Name'
+            'email':'test@example.com',
+            'password':'testpass123',
+            'name':'Test Name',
         }
 
         create_user(**payload)
@@ -61,9 +59,9 @@ class PublicUserAPITests(TestCase):
         """Test an error is returned if password is less than 5 chars."""
 
         payload = {
-            'email': 'test@example.com',
-            'password' : 'pw',
-            'name' : 'Test Name'
+            'email':'test@example.com',
+            'password':'pw',
+            'name':'Test Name',
         }
 
         res =  self.client.post(CREATE_USER_URL, payload)
@@ -78,9 +76,9 @@ class PublicUserAPITests(TestCase):
         """Test generatres token for valid credentials"""
 
         user_details = {
-            'name' : 'Test Name',
-            'email' : 'test@example.com',
-            'password' : 'test-user-password123',
+            'name':'Test Name',
+            'email':'test@example.com',
+            'password':'test-user-password123',
         }
         create_user(**user_details)
 
@@ -99,8 +97,8 @@ class PublicUserAPITests(TestCase):
         create_user(email= 'test@example.com', password= 'goodpass')
 
         payload = {
-            'email': 'test@example.com',
-            'password': 'badpass'
+            'email':'test@example.com',
+            'password':'badpass',
         }
         res = self.client.post(TOKEN_URL, payload)
 
@@ -111,8 +109,8 @@ class PublicUserAPITests(TestCase):
         """Test posting a blank returns an error"""
 
         payload = {
-            'email': 'test@example.com',
-            'password': ''
+            'email':'test@example.com',
+            'password':'',
         }
         res = self.client.post(TOKEN_URL, payload)
 
@@ -131,9 +129,9 @@ class PrivateUserAPITests(TestCase):
 
     def setUp(self):
         self.user = create_user(
-            email = 'test@example.com',
-            password = 'testpass123',
-            name = 'Test Name',
+            email='test@example.com',
+            password='testpass123',
+            name='Test Name',
         )
         self.client = APIClient()
         self.client.force_authenticate(user = self.user)
@@ -146,8 +144,8 @@ class PrivateUserAPITests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, {
-            'name' : self.user.name,
-            'email' : self.user.email,
+            'name':self.user.name,
+            'email':self.user.email,
         })
 
     def test_post_me_not_allowed(self):

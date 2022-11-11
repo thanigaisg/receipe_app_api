@@ -43,12 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
     'rest_framework',
     'rest_framework.authtoken',
     'drf_spectacular',
+    'core',
     'user',
-    'recipe'
+    'recipe',
 ]
 
 MIDDLEWARE = [
@@ -150,5 +150,5 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'COMPONENT_SPLIT_REQUEST' : True,
+    'COMPONENT_SPLIT_REQUEST': True,
 }

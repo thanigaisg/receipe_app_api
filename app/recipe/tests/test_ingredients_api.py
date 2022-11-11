@@ -68,7 +68,7 @@ class PrivateIngredientAPITests(TestCase):
     def test_ingredients_limited_to_user(self):
         """Test list of ingredients is limited to authenticated user"""
 
-        user2 = create_user(email='user2@exmaple.com')
+        user2 = create_user(email='user2@example.com')
 
         Ingredient.objects.create(user=user2, name='Salt')
         ingredient = Ingredient.objects.create(user=self.user, name='Pepper')
@@ -85,7 +85,7 @@ class PrivateIngredientAPITests(TestCase):
 
         ingredient = Ingredient.objects.create(user=self.user, name='Cilantro')
 
-        payload = {'name' : 'Coriander'}
+        payload = {'name':'Coriander'}
         url = detail_url(ingredient.id)
         res = self.client.patch(url, payload)
 
@@ -109,18 +109,18 @@ class PrivateIngredientAPITests(TestCase):
     def test_filter_ingredients_assigned_to_recipe(self):
         """Test listing ingredients by those assigned to recipe"""
 
-        in1 = Ingredient.objects.create(user = self.user, name = 'Apple')
-        in2 = Ingredient.objects.create(user = self.user, name = 'Turkey')
+        in1 = Ingredient.objects.create(user=self.user, name='Apple')
+        in2 = Ingredient.objects.create(user=self.user, name='Turkey')
 
         recipe = Recipe.objects.create(
-            title = 'Apple Crumble',
-            time_minutes = 5,
-            price = Decimal('4.50'),
-            user = self.user,
+            title='Apple Crumble',
+            time_minutes=5,
+            price=Decimal('4.50'),
+            user=self.user,
         )
         recipe.ingredients.add(in1)
 
-        res = self.client.get(INGREDIENTS_URL, {'assigned_only' : 1})
+        res = self.client.get(INGREDIENTS_URL, {'assigned_only':1})
 
         s1 = IngredientSerializer(in1)
         s2 = IngredientSerializer(in2)
@@ -130,26 +130,26 @@ class PrivateIngredientAPITests(TestCase):
     def test_filtered_ingredient_unique(self):
         """Test filtered ingredients returns a unique list"""
 
-        ing = Ingredient.objects.create(user = self.user, name = 'Eggs')
-        Ingredient.objects.create(user = self.user, name = 'Lentils')
+        ing = Ingredient.objects.create(user=self.user, name='Eggs')
+        Ingredient.objects.create(user=self.user, name='Lentils')
 
         recipe1 = Recipe.objects.create(
-            title = 'Eggs Benedict',
-            time_minutes = 60,
-            price = Decimal('7.00'),
-            user = self.user,
+            title='Eggs Benedict',
+            time_minutes=60,
+            price=Decimal('7.00'),
+            user=self.user,
         )
 
         recipe2 = Recipe.objects.create(
-            title = 'Herb Eggs',
-            time_minutes = 20,
-            price = Decimal('4.00'),
-            user = self.user,
+            title='Herb Eggs',
+            time_minutes=20,
+            price=Decimal('4.00'),
+            user=self.user,
         )
 
         recipe1.ingredients.add(ing)
         recipe2.ingredients.add(ing)
 
-        res = self.client.get(INGREDIENTS_URL, {'assigned_only': 1})
+        res = self.client.get(INGREDIENTS_URL, {'assigned_only':1})
 
         self.assertEqual(len(res.data), 1)
